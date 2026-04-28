@@ -1,7 +1,4 @@
-import { pgTable, text, timestamp, integer, jsonb, pgEnum } from "drizzle-orm/pg-core";
-
-export const leadStatusEnum = pgEnum("lead_status", ["New", "Qualified", "Contacted", "Proposal", "Closed"]);
-export const leadScoreEnum = pgEnum("lead_score", ["Hot", "Warm", "Cold"]);
+import { pgTable, text, timestamp, integer, jsonb } from "drizzle-orm/pg-core";
 
 export const leads = pgTable("leads", {
   id: text("id").primaryKey(),
@@ -17,6 +14,8 @@ export const leads = pgTable("leads", {
   nextAction: text("next_action").notNull().default("ask_more"),
   summary: text("summary").notNull(),
   painPoint: text("pain_point").notNull(),
+  reasoning: text("reasoning").notNull().default("No analysis provided."),
+  suggestedReply: text("suggested_reply").notNull().default("Thinking of a follow-up..."),
   confidence: integer("confidence").notNull().default(50),
   estimatedValue: text("estimated_value").notNull().default("Unknown"),
   messages: jsonb("messages").notNull().default([]),

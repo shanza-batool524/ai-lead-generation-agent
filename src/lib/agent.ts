@@ -13,6 +13,8 @@ const fallback: AgentOutput = {
   nextAction: "ask_more",
   summary: "Lead needs more qualification before a proposal can be prepared.",
   painPoint: "Unknown",
+  reasoning: "The lead has provided initial interest but lacks specific project constraints like budget or urgency.",
+  suggestedReply: "I'd love to learn more about your goals. Do you have a specific budget range or launch date in mind?",
   confidence: 45,
   estimatedValue: "Unknown"
 };
@@ -31,10 +33,12 @@ export const leadSchema = {
     nextAction: { type: Type.STRING, enum: ["ask_more", "book_call", "send_proposal", "send_followup", "not_interested"] },
     summary: { type: Type.STRING },
     painPoint: { type: Type.STRING },
+    reasoning: { type: Type.STRING },
+    suggestedReply: { type: Type.STRING },
     confidence: { type: Type.NUMBER },
     estimatedValue: { type: Type.STRING }
   },
-  required: ["reply", "name", "company", "email", "budget", "timeline", "projectType", "leadScore", "nextAction", "summary", "painPoint", "confidence", "estimatedValue"]
+  required: ["reply", "name", "company", "email", "budget", "timeline", "projectType", "leadScore", "nextAction", "summary", "painPoint", "reasoning", "suggestedReply", "confidence", "estimatedValue"]
 };
 
 function mergeValue<T>(incoming: T, previous: T): T {
@@ -76,9 +80,8 @@ export function buildPrompt(message: string, lead?: Lead) {
 Your goals:
 - Reply in a concise, professional, helpful sales-assistant tone.
 - Extract or update the lead profile from the full conversation.
-- Ask one high-value follow-up question if key info is missing.
-- Prefer moving strong leads toward a discovery call.
-- Never invent budget, timeline, company, email, or name. Use unknown when missing.
+- As an "Agentic" system, you must provide your INTERNAL REASONING for the classification and score.
+- Draft a SUGGESTED REPLY for a human sales agent to use as a follow-up.
 - Classify budget: high means enterprise/high-value, medium means serious SMB/startup, low means very small or unclear affordability.
 - Classify timeline: urgent means days/this week/asap, soon means within 1-8 weeks, flexible means no pressure.
 
@@ -149,6 +152,8 @@ export function applyAgentOutput(message: string, output: AgentOutput, previous?
     nextAction: output.nextAction,
     summary: output.summary || previous?.summary || "Lead captured by AI agent.",
     painPoint: output.painPoint || previous?.painPoint || "Unknown",
+    reasoning: output.reasoning,
+    suggestedReply: output.suggestedReply,
     confidence: output.confidence,
     estimatedValue: output.estimatedValue || previous?.estimatedValue || "Unknown",
     createdAt: previous?.createdAt || now,

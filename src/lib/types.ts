@@ -26,6 +26,8 @@ export type Lead = {
   nextAction: NextAction;
   summary: string;
   painPoint: string;
+  reasoning: string; // New: AI logic explanation
+  suggestedReply: string; // New: Drafted response for the sales team
   confidence: number;
   estimatedValue: string;
   createdAt: string;
@@ -46,6 +48,8 @@ export type AgentOutput = {
   nextAction: NextAction;
   summary: string;
   painPoint: string;
+  reasoning: string;
+  suggestedReply: string;
   confidence: number;
   estimatedValue: string;
 };
